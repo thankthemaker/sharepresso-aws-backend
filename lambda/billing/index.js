@@ -4,6 +4,7 @@ let doc = new AWS.DynamoDB.DocumentClient()
 let doc2 = new AWS.DynamoDB.DocumentClient()
 let coffeesTable = process.env.COFFEES_TABLE
 let cardsTable = process.env.CARDS_TABLE
+let selectStatus = process.env.SELECT_STATUS
 
 
 console.log('Loading function')
@@ -76,6 +77,7 @@ exports.handler = function (event, context, callback) {
         "startdate": event.startdate,
         "enddate": event.enddate,
         "preview": event.preview,
+        "balances": event.balances,
         "cards": cards
         
       }, event));
@@ -93,7 +95,7 @@ function markAsSelected(docClient, coffee) {
     },
     UpdateExpression: "set billstatus = :status",
     ExpressionAttributeValues:{
-        ":status": "selected"
+        ":status": selectStatus
     },
     ReturnValues:"UPDATED_NEW"
 };

@@ -1,0 +1,63 @@
+Resources:
+  ConnectPolicy:
+    Type: "AWS::IoT::Policy"
+    Properties:
+      PolicyName: ${{self:custom.context}}_IotConnectPolicy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Action:
+              - "iot:Connect"
+            Resource:
+              - "*"
+
+  PublicSubscribePolicy:
+    Type: "AWS::IoT::Policy"
+    Properties:
+      PolicyName: ${{self:custom.context}}_IotPublicSubscribePolicy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Action:
+              - "iot:Subscribe"
+            Resource:
+              {
+                "Fn::Join":
+                  [
+                    "",
+                    [
+                      "arn:aws:iot:",
+                      { "Ref": "AWS::Region" },
+                      ":",
+                      { "Ref": "AWS::AccountId" },
+                      ":topicfilter/room/public/*",
+                    ],
+                  ],
+              }
+
+  PublicReceivePolicy:
+    Type: "AWS::IoT::Policy"
+    Properties:
+      PolicyName: ${{self:custom.context}}_IotChatReceivePolicy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Action:
+              - "iot:Receive"
+            Resource:
+              {
+                "Fn::Join":
+                  [
+                    "",
+                    [
+                      "arn:aws:iot:",
+                      { "Ref": "AWS::Region" },
+                      ":",
+                      { "Ref": "AWS::AccountId" },
+                      ":topic/room/public/*",
+                    ],
+                  ],
+              }

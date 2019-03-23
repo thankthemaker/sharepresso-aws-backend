@@ -1,0 +1,4 @@
+CreateCoffee:
+  handler: lambda/newCoffee/index.handler
+  name: ${{self:custom.context}}-${{self:service}}-${{self:custom.stage}}-CreateCoffee
+  timeout: 10

@@ -1,0 +1,17 @@
+GetCoffee:
+  handler: lambda/coffee-handler/index.handler
+  name: ${{self:custom.context}}-${{self:service}}-${{self:custom.stage}}-GetCoffee
+  timeout: 15
+  environment:
+    COFFEES_TABLE: ${{self:custom.context}}_coffee
+  events:
+    - http:
+        path: /coffees
+        method: any
+        cors: true
+        authorizer: aws_iam
+    - http: 
+        path: /coffees/{proxy+}
+        method: any
+        cors: true
+        authorizer: aws_iam

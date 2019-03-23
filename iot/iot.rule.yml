@@ -1,0 +1,30 @@
+Resources:
+ 
+  CoffeeShotIoTRule:
+    Type: "AWS::IoT::TopicRule"
+    Properties:
+      RuleName: ${{self:custom.context}}_CoffeeShotRule
+      TopicRulePayload:
+        RuleDisabled: "false"
+        AwsIotSqlVersion: "2016-03-23"
+        Sql:
+          Fn::Join:
+            - ""
+            - - "SELECT * "
+              - "FROM 'coffeemaker/coffee' "
+        Actions:
+          - DynamoDB:
+              RoleArn: 
+                Fn::GetAtt: [ IotDynamoPutRole, Arn ]
+              TableName: ${{self:custom.context}}_coffee
+              HashKeyField: cardId
+              HashKeyType: STRING
+              HashKeyValue: "${cardid}"
+              RangeKeyField: timestamp
+              RangeKeyType: NUMBER
+              PayloadField: payload
+          - S3:
+              RoleArn: 
+                Fn::GetAtt: [ IotDynamoPutRole, Arn ]
+              BucketName: javaland-coffeemaker
+              Key: "${{self:custom.context}}/${topic()}/${timestamp()}"

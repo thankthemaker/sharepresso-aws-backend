@@ -1,0 +1,6 @@
+Resources: 
+  CoffeemakerPolicyPrincipalAttachmentCert:
+    Type: AWS::IoT::PolicyPrincipalAttachment
+    Properties:
+      PolicyName: { Ref: ConnectPolicy }
+      Principal: arn:aws:iot:us-west-2:127306523332:cert/e3cb6c19e6bc0a1371b7a391330bdc6ebf909591d3f2755de0c137cc53dc07e1

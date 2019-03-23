@@ -1,0 +1,7 @@
+JokesApi:
+  handler: lambda/jokesApi/index.handler
+  name: ${{self:custom.context}}-${{self:service}}-${{self:custom.stage}}-JokesApi
+  environment:
+    CREDENTIALS_FILE: coffeemaker-4578815a6092.json
+    RANGE: jokes!A2:B1000
+    SPREADSHEET_ID: 1RT7zImHYukkwMGZJYC7zZ9GCYnIS3lV2YC68aLVccNU

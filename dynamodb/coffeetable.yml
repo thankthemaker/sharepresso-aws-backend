@@ -1,0 +1,18 @@
+Resources:
+  CoffeeTable:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      TableName: "${{self:custom.context}}_coffee"
+      AttributeDefinitions:
+        - AttributeName: cardId
+          AttributeType: S
+        - AttributeName: timestamp
+          AttributeType: N
+      KeySchema:
+        - AttributeName: cardId
+          KeyType: HASH
+        - AttributeName: timestamp
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5

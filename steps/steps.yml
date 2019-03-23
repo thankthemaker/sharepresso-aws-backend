@@ -1,0 +1,30 @@
+stateMachines:
+  billing:
+    definition:
+      Comment: "A Hello World example of the Amazon States Language using an AWS Lambda Function"
+      StartAt: billing
+      States:
+        billing:
+          Type: Task
+          Resource: "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${{self:custom.context}}-${{self:service}}-${{self:custom.stage}}-Billing"
+          Next: billingMailer
+          Catch:
+            - ErrorEquals:
+                - States.ALL
+              Next: billingError
+        billingMailer:
+          Type: Task
+          Resource: "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${{self:custom.context}}-${{self:service}}-${{self:custom.stage}}-BillingMailer"
+          Next: billingCompletion
+          Catch:
+            - ErrorEquals:
+                - States.ALL
+              Next: billingError
+        billingCompletion:
+          Type: Task
+          Resource: "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${{self:custom.context}}-${{self:service}}-${{self:custom.stage}}-BillingCompletion"
+          End: true
+        billingError:
+          Type: Task
+          Resource: "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:${{self:custom.context}}-${{self:service}}-${{self:custom.stage}}-BillingError"
+          End: true

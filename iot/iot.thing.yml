@@ -1,0 +1,5 @@
+Resources:
+  CoffeeMaker:
+    Type: "AWS::IoT::Thing"
+    Properties:
+      ThingName: ${{self:custom.context}}_coffeemaker_juragigax8

@@ -1,0 +1,17 @@
+CreateCard:
+  handler: lambda/card-handler/index.handler
+  name: ${{self:custom.context}}-${{self:service}}-${{self:custom.stage}}-CreateCard
+  timeout: 15
+  environment:
+    CARDS_TABLE: ${{self:custom.context}}_card
+  events:
+    - http:
+        path: /cards
+        method: any
+        cors: true
+        authorizer: aws_iam
+    - http: 
+        path: /cards/{proxy+}
+        method: any
+        cors: true
+        authorizer: aws_iam

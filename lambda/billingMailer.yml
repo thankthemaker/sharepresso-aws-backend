@@ -1,0 +1,7 @@
+BillingMailer:
+  handler: lambda/billingMailer/index.handler
+  name: ${{self:custom.context}}-${{self:service}}-${{self:custom.stage}}-BillingMailer
+  timeout: 300
+  environment:
+    MAIL_FROM: "Coffeemaker <coffeemaker@thank-the-maker.org>"
+    MAIL_REPLY_TO: "coffeemaker@thank-the-maker.org"

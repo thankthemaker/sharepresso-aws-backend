@@ -1,0 +1,18 @@
+Resources:
+  CardTable:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      TableName: "${{self:custom.context}}_card"
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: cardId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+        - AttributeName: cardId
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5

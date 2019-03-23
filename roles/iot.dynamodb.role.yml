@@ -1,0 +1,21 @@
+Resources:
+  IotDynamoPutRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - iot.amazonaws.com
+            Action: "sts:AssumeRole"
+      Policies:
+        - PolicyName: IotPutCoffeeTable
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: "dynamodb:PutItem"
+                Resource:
+                  Fn::GetAtt: [CoffeeTable, Arn]

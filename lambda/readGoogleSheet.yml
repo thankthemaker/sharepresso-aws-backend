@@ -1,0 +1,7 @@
+ReadGoogleSheet:
+  handler: lambda/readGoogleSheet/index.handler
+  name: ${{self:custom.context}}-${{self:service}}-${{self:custom.stage}}-ReadGoogleSheet
+  environment:
+    CREDENTIALS_FILE: coffeemaker-4578815a6092.json
+    RANGE: jokes!A2:B1000
+    SPREADSHEET_ID: 1B8quVZCtX9txHdMnFU1eElzsYqgcN9YlLXfnlWB

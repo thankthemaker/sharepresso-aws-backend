@@ -1,0 +1,3 @@
+BillingError:
+  handler: lambda/billingError/index.handler
+  name: ${{self:custom.context}}-${{self:service}}-${{self:custom.stage}}-BillingError

@@ -1,0 +1,6 @@
+BillingCompletion:
+  handler: lambda/billingCompletion/index.handler
+  name: ${{self:custom.context}}-${{self:service}}-${{self:custom.stage}}-BillingCompletion
+  timeout: 300
+  environment:
+    COFFEES_TABLE: ${{self:custom.context}}_coffee

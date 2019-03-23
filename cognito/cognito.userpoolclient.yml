@@ -1,0 +1,8 @@
+  Resources:
+    CoffeemakerAppClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        GenerateSecret: false
+        RefreshTokenValidity: 200
+        UserPoolId:
+          Ref: UserPool

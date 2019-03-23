@@ -1,0 +1,13 @@
+Billing:
+  handler: lambda/billing/index.handler
+  name: ${{self:custom.context}}-${{self:service}}-${{self:custom.stage}}-Billing
+#  description: Description of what the lambda function does # optional, Description to publish to AWS
+#  runtime: python2.7 # optional overwrite, default is provider runtime
+#  memorySize: 512 # optional, in MB, default is 1024
+  timeout: 300
+#  reservedConcurrency: 5 # optional, reserved concurrency limit for this function. By default, AWS uses account concurrency limit
+#  tracing: PassThrough # optional, overwrite, can be 'Active' or 'PassThrough'
+  environment:
+    CARDS_TABLE: ${{self:custom.context}}_card
+    COFFEES_TABLE: ${{self:custom.context}}_coffee
+    SELECT_STATUS: selected

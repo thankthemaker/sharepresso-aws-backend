@@ -1,0 +1,11 @@
+  Resources:
+    IdentityPool:
+      Type: "AWS::Cognito::IdentityPool"
+      Properties:
+        IdentityPoolName: ${{self:custom.context}}_coffeemaker_identity_pool
+        AllowUnauthenticatedIdentities: false
+        CognitoIdentityProviders:
+          - ClientId:
+              Ref: CoffeemakerAppClient
+            ProviderName:
+              Fn::GetAtt: UserPool.ProviderName
