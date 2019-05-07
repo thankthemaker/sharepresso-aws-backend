@@ -23,17 +23,37 @@ function handleHttpMethod (event, context) {
 function handleGET (event, context) {
   let params = {
     TableName: coffeesTable,
+      FilterExpression: "attribute_not_exists(billstatus)"
 //    KeyConditionExpression: 'cardId = :key',
 //    ExpressionAttributeValues: { ':key': event.requestContext.identity.cognitoIdentityId }
   }
 
 
   console.log('GET query: ', JSON.stringify(params))
-  doc.scan(params, (err, data) => {
-//  doc.query(params, (err, data) => {
-    if (err) { return errorResponse(context, 'Error: ', err) }
-    return successResponse(context, {coffees: data.Items})
-  })
+  var coffeeScan = new Promise(function(resolve, reject) {
+      var coffees = []
+      var onScan = (err, coffeedata) => {
+        if (err) { return errorResponse(context, 'Error: ', err) }
+        
+        coffees = coffees.concat(coffeedata.Items)
+
+        if (typeof coffeedata.LastEvaluatedKey != "undefined") {
+        console.log("Scanning for more...");
+        console.log("coffeedata LastEvaluatedKey: " + JSON.stringify(coffeedata.LastEvaluatedKey));
+        params.ExclusiveStartKey = coffeedata.LastEvaluatedKey;
+        console.log('query: ', JSON.stringify(params))
+        doc.scan(params, onScan);
+      } else {
+        return resolve(coffeedata.Items);
+      }
+    }
+    console.log('query: ', JSON.stringify(params))
+    doc.scan(params, onScan);
+  });
+  
+  coffeeScan.then((coffees) => {
+        return successResponse(context, {coffees: coffees})
+  });
 }
 
 

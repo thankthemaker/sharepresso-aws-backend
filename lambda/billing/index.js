@@ -15,7 +15,7 @@ exports.handler = function (event, context, callback) {
   let cards = [];
   let coffeeparams = {
     TableName: coffeesTable,
-    FilterExpression: "attribute_not_exists(billstatus)"
+    FilterExpression: "attribute_not_exists(billstatus)",
 //    KeyConditionExpression: 'cardId = :key',
 //    ExpressionAttributeValues: { ':key': event.requestContext.identity.cognitoIdentityId }
   }
@@ -41,13 +41,13 @@ exports.handler = function (event, context, callback) {
       cards.push(newCard);
     });
     
-    
-////coffeedata
-  console.log('query: ', JSON.stringify(coffeeparams))
-  doc2.scan(coffeeparams, (err, coffeedata) => {
-      if (err) { console.log("Error: " + err); }
-    
-      console.log("Found coffeedata, item count: " + coffeedata.Items.length);
+//coffeedata start
+    var coffeeScan = new Promise(function(resolve, reject) {
+
+    var onScan = (err, coffeedata) => {
+     if (err) { console.log("Error: " + err); }
+      
+      console.log("Found coffeedata, item count: " + coffeedata.Items.length + " scanned count: " + coffeedata.ScannedCount);
       console.log("Date range: " + event.startdate + "-" + event.enddate);
       coffeedata.Items.forEach(coffee => {
         if(new Date(coffee.timestamp).toISOString() > event.startdate && 
@@ -59,31 +59,48 @@ exports.handler = function (event, context, callback) {
                }
         }
       });
-      
-      console.log(coffees.length + "coffee items matched time range")
+      if (typeof coffeedata.LastEvaluatedKey != "undefined") {
+        console.log("Scanning for more...");
+        console.log("coffeedata LastEvaluatedKey: " + JSON.stringify(coffeedata.LastEvaluatedKey));
+        coffeeparams.ExclusiveStartKey = coffeedata.LastEvaluatedKey;
+         console.log('query: ', JSON.stringify(coffeeparams))
+        doc2.scan(coffeeparams, onScan);
+      } else {
+        return resolve(coffees);
+      }
+
+    }
+      console.log('query: ', JSON.stringify(coffeeparams))
+      doc2.scan(coffeeparams, onScan);
+    });
+//coffeedata end    
+
+
+  coffeeScan.then((results) => {
+         console.log(coffees.length + "coffee items matched time range")
       
       cards.forEach(card => {
-          coffees.forEach(coffee => {
-              //console.log("Coffee: " + JSON.stringify(coffee));
-              if(coffee.cardId === card.cardId) {
-                  card.sum += coffee.payload.price;
-                  //card.coffees.push(coffee);
-              }
-          });
-      }); 
-    //console.log("Result:" + JSON.stringify(cards));
-    callback(null, Object.assign(
-      {
-        "startdate": event.startdate,
-        "enddate": event.enddate,
-        "preview": event.preview,
-        "balances": event.balances,
-        "cards": cards
-        
-      }, event));
- });
-////coffeedata    
+        coffees.forEach(coffee => {
+          //console.log("Coffee: " + JSON.stringify(coffee));
+          if(coffee.cardId === card.cardId) {
+            card.sum += coffee.payload.price;
+            //card.coffees.push(coffee);
+          }
+        });
+      });
+  
+      //console.log("Result:" + JSON.stringify(cards));
+      callback(null, Object.assign(
+       {
+         "startdate": event.startdate,
+         "enddate": event.enddate,
+         "preview": event.preview,
+         "balances": event.balances,
+         "cards": cards
+        }, event));
   });
+
+ });
 }
 
 function markAsSelected(docClient, coffee) {
